@@ -14,4 +14,13 @@ export default eslintConfig([
   ...eslintConfigPerfectionist,
   ...eslintConfigPrettier,
   ...eslintConfigReact,
+  // {
+  //   languageOptions: {
+  //     parserOptions: {
+  //       projectService: {
+  //         allowDefaultProject: [`prettier.config.mjs`],
+  //       },
+  //     },
+  //   },
+  // },
 ]);

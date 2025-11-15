@@ -44,7 +44,7 @@
 
 @font-face {
   font-family: 'Castoro';
-  src: url('./assets/Castoro-Regular.ttf') format('ttf');
+  src: local('Castoro-Regular'), url('/Castoro-Regular.ttf') format('truetype');
   font-weight: normal;
   font-style: normal;
 }
@@ -52,7 +52,16 @@
 @layer base {
   * {
     @apply border-border outline-ring/50 optimize-legibility tracking-tight antialiased;
-    font-family: 'Castoro', serif;
+    font-family: 'Castoro', sans-serif;
+  }
+
+  *,
+  *::after,
+  *::before {
+    -webkit-user-select: none;
+    user-select: none;
+    -webkit-user-drag: none;
+    -webkit-app-region: no-drag;
   }
 
   body {

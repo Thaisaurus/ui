@@ -1,17 +1,21 @@
 import clsx from 'clsx';
 import { AnimatePresence } from 'motion/react';
+import { motion } from 'motion/react';
 import { type MouseEvent, useEffect, useRef, useState } from 'react';
 
 import type { Node } from '@/lib/types';
 
+import { AnimatedText } from './animated-text';
 import { GraphNode } from './graph-node';
 
 const Graph = ({
   nodes,
-  queryNode,
+  queryWord,
+  theWord,
 }: {
   nodes: Array<Node>;
-  queryNode?: Node;
+  queryWord: string;
+  theWord: { definition: string; word: string };
 }) => {
   const [position, setPosition] = useState({
     x: 0,
@@ -51,7 +55,7 @@ const Graph = ({
   return (
     <div
       className={clsx(
-        `relative flex h-[max(1920px,200vh)] w-[max(1920px,200vw)] items-center justify-center bg-[url(/bg.svg)] bg-center`,
+        `relative flex h-[200vh] xl:h-[2933.333333px] md:xl:w-[5133.333333333px] w-[200vw] items-center justify-center bg-[url(/bg.svg)] bg-center`,
         !hoveringNode && (isDragging ? `cursor-grabbing` : `cursor-grab`),
       )}
       onMouseDown={(e: MouseEvent) => {
@@ -82,30 +86,40 @@ const Graph = ({
         transform: `translate(${position.x}px, ${position.y}px)`,
       }}
     >
-      <AnimatePresence>
-        {nodes.map(({ id, position }) => (
+      {nodes.map(({ id, position }) => (
+        <AnimatePresence key={id} mode='wait'>
           <GraphNode
             key={id}
             position={position}
             setHoveringNode={setHoveringNode}
           />
-        ))}
-        {queryNode && (
-          <GraphNode
-            key={queryNode.id}
-            options={{ color: `yellow` }}
-            position={queryNode.position}
-            setHoveringNode={setHoveringNode}
-          />
-        )}
+        </AnimatePresence>
+      ))}
+      <AnimatePresence mode='wait'>
+        <GraphNode
+          key={queryWord}
+          options={{ color: `red` }}
+          position={{ x: 50, y: 50 }}
+          randomDelay={false}
+          setHoveringNode={setHoveringNode}
+        />
       </AnimatePresence>
-      <div className='size-screen mx-auto grid select-none grid-cols-5 grid-rows-4'>
-        <div className='col-start-2 row-start-1'>
-          <h1 className='text-6xl md:text-8xl'>Thaisaurus</h1>
-          <h2 className='text-foreground/70 text-nowrap text-3xl'>
-            a book or electronic resource that lists words in groups <br />
-            of synonyms and related concepts.
-          </h2>
+      <div className='w-screen h-screen mx-auto flex-wrap flex flex-col py-12 px-8 md:grid select-none grid-cols-6 lg:grid-cols-12 grid-rows-4'>
+        <div className=' md:col-start-2 lg:col-start-3 row-start-2 col-span-4 '>
+          <h1 className='text-6xl md:text-8xl flex'>
+            <AnimatedText position={50}>{theWord.word}</AnimatedText>
+          </h1>
+          <AnimatePresence mode='wait'>
+            <motion.h2
+              animate={{ opacity: 1 }}
+              className='text-foreground/70 text-3xl'
+              exit={{ opacity: 0 }}
+              initial={{ opacity: 0 }}
+              key={theWord.word}
+            >
+              {theWord.definition}
+            </motion.h2>
+          </AnimatePresence>
         </div>
       </div>
     </div>
