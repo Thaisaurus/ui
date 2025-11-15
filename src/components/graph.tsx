@@ -81,6 +81,28 @@ const Graph = ({
         });
       }}
       onMouseUp={() => setIsDragging(false)}
+      onTouchEnd={() => setIsDragging(false)}
+      onTouchMove={(e) => {
+        if (!isDragging) return;
+        if (!graphRef.current) return;
+        setPosition({
+          x: Math.max(
+            Math.min(0, e.touches[0].clientX - dragStartRef.current.x),
+            -graphRef.current?.clientWidth + windowWidth,
+          ),
+          y: Math.max(
+            Math.min(0, e.touches[0].clientY - dragStartRef.current.y),
+            -graphRef.current?.clientHeight + windowHeight,
+          ),
+        });
+      }}
+      onTouchStart={(e) => {
+        setIsDragging(true);
+        dragStartRef.current = {
+          x: e.touches[0].clientX - position.x,
+          y: e.touches[0].clientY - position.y,
+        };
+      }}
       ref={graphRef}
       style={{
         transform: `translate(${position.x}px, ${position.y}px)`,
