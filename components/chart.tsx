@@ -6,9 +6,9 @@ import { type MouseEvent, useEffect, useRef, useState } from 'react';
 import type { Node } from '@/lib/types';
 
 import { AnimatedText } from '@/components/animated-text';
-import { GraphNode } from '@/components/graph-node';
+import { ChartNode } from '@/components/chart-element';
 
-const Graph = ({
+const Chart = ({
   nodes,
   queryWord,
   theWord,
@@ -55,7 +55,7 @@ const Graph = ({
   return (
     <div
       className={clsx(
-        `relative flex h-[200vh] w-[200vw] items-center justify-center bg-[url(/bg.svg)] bg-center xl:h-[2933.333333px] md:xl:w-[5133.333333333px]`,
+        `relative flex h-[200vh] w-[200vw] items-center justify-center bg-[url(/bg.svg)] bg-center`,
         !hoveringNode && (isDragging ? `cursor-grabbing` : `cursor-grab`),
       )}
       onMouseDown={(e: MouseEvent) => {
@@ -108,17 +108,17 @@ const Graph = ({
         transform: `translate(${position.x}px, ${position.y}px)`,
       }}
     >
-      {nodes.map(({ id, position }) => (
-        <AnimatePresence key={id} mode='wait'>
-          <GraphNode
-            key={id}
+      <AnimatePresence>
+        {nodes.map(({ id, position }) => (
+          <ChartNode
+            key={`${id}-${position.x}-${position.y}`}
             position={position}
             setHoveringNode={setHoveringNode}
           />
-        </AnimatePresence>
-      ))}
+        ))}
+      </AnimatePresence>
       <AnimatePresence mode='wait'>
-        <GraphNode
+        <ChartNode
           key={queryWord}
           options={{ color: `red` }}
           position={{ x: 50, y: 50 }}
@@ -126,7 +126,7 @@ const Graph = ({
           setHoveringNode={setHoveringNode}
         />
       </AnimatePresence>
-      <div className='mx-auto flex h-screen w-screen grid-cols-6 grid-rows-4 flex-col flex-wrap px-8 py-12 select-none md:grid lg:grid-cols-12'>
+      <div className='mx-auto flex h-screen w-screen select-none grid-cols-6 grid-rows-4 flex-col flex-wrap px-8 py-12 md:grid lg:grid-cols-12'>
         <div className='col-span-4 row-start-2 md:col-start-2 lg:col-start-3'>
           <h1 className='flex text-6xl md:text-8xl'>
             <AnimatedText position={50}>{theWord.word}</AnimatedText>
@@ -134,7 +134,7 @@ const Graph = ({
           <AnimatePresence mode='wait'>
             <motion.h2
               animate={{ opacity: 1 }}
-              className='text-3xl text-foreground/70'
+              className='text-foreground/70 text-3xl'
               exit={{ opacity: 0 }}
               initial={{ opacity: 0 }}
               key={theWord.word}
@@ -148,4 +148,4 @@ const Graph = ({
   );
 };
 
-export { Graph };
+export { Chart };

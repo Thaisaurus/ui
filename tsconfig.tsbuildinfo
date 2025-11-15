@@ -1,1 +1,1 @@
-{"root":["./eslint.config.ts","./vite.config.ts","./src/components/icons/index.ts","./src/lib/types.ts","./src/app.tsx","./src/main.tsx","./src/components/graph-node.tsx","./src/components/graph.tsx","./src/components/icons/info.tsx","./src/components/icons/send.tsx"],"errors":true,"version":"5.9.3"}
+{"root":["./eslint.config.ts","./prettier.config.ts"],"errors":true,"version":"5.9.3"}

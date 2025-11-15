@@ -16,7 +16,7 @@ import { useRef, useState } from 'react';
 
 import type { Node } from '@/lib/types';
 
-import { Graph } from '@/components/graph';
+import { Chart } from '@/components/chart';
 import { Send } from '@/components/icons';
 
 const sampleQueries = [`A more pleasant word for "smell"`, `Lol`, `wtf`];
@@ -85,8 +85,8 @@ export default function Home() {
     if (querying || !thinkingDone) return;
     if (query.length === 0) return;
     setQueryWord(query);
-    setQuery(``);
     setNodes([]);
+    setQuery(``);
     setSelectedTags([]);
 
     setQuerying(true);
@@ -106,14 +106,14 @@ export default function Home() {
 
   return (
     <>
-      <Graph nodes={nodes} queryWord={queryWord} theWord={theWord} />
-      <div className='fixed right-1/2 bottom-0 flex translate-x-1/2 -translate-y-12 flex-col justify-center gap-1.5'>
+      <Chart nodes={nodes} queryWord={queryWord} theWord={theWord} />
+      <div className='fixed bottom-0 right-1/2 flex -translate-y-12 translate-x-1/2 flex-col justify-center gap-1.5'>
         <div className='flex h-3 items-center justify-center'>
           <AnimatePresence onExitComplete={() => setThinkingDone(true)}>
             {querying && (
               <m.span
                 animate={{ opacity: 1, transition: { type: `spring` }, y: 0 }}
-                className='-z-50 text-center text-foreground/80'
+                className='text-foreground/80 -z-50 text-center text-lg'
                 exit={{
                   opacity: 0,
                   position: `absolute`,
@@ -135,8 +135,7 @@ export default function Home() {
               autoFocus
               autoSelect
               blurActiveItemOnClick
-              className='min-w-0 rounded-full border bg-border/20 pt-4 pr-16 pb-3.5 pl-6 font-sans text-xl text-foreground outline-border/20 backdrop-blur-sm transition-colors placeholder:text-muted-foreground focus:border focus:outline-none data-disabled:placeholder:text-muted-foreground/80 max-sm:w-2xs md:w-xl'
-              data-disabled={!thinkingDone || querying}
+              className='bg-border/20 text-foreground outline-border/20 placeholder:text-muted-foreground max-sm:w-2xs md:w-xl min-w-0 rounded-full border pb-3.5 pl-6 pr-16 pt-4 font-sans text-xl backdrop-blur-sm transition-colors focus:border focus:outline-none'
               focusOnMove={false}
               onChange={(e) => {
                 const value = e.target.value;
@@ -175,7 +174,7 @@ export default function Home() {
             />
             <MotionComboboxPopover
               animate={{ opacity: 1 }}
-              className='flex flex-col gap-2 rounded-lg border bg-border/20 p-2 backdrop-blur-sm'
+              className='bg-border/20 flex flex-col gap-2 rounded-lg border p-2 backdrop-blur-sm'
               finalFocus={inputRef.current}
               gutter={4}
               initial={{ opacity: 0 }}
@@ -194,7 +193,7 @@ export default function Home() {
                   <ComboboxItem
                     autoFocus
                     className={clsx(
-                      `rounded-md px-2 py-2 font-sans outline-border outline-none data-active-item:bg-border/40 data-active-item:outline`,
+                      `outline-border data-active-item:bg-border/40 data-active-item:outline rounded-md px-2 py-2 font-sans outline-none`,
                     )}
                     clickOnSpace={false}
                     hideOnClick
@@ -218,14 +217,14 @@ export default function Home() {
           </ComboboxProvider>
 
           <button
-            className='absolute right-0 inline-flex aspect-square h-[calc(100%-24px)] -translate-x-[calc(50%-6px)] items-center justify-center rounded-full bg-foreground transition-colors hover:cursor-pointer hover:bg-foreground/90 data-disabled:bg-foreground/80'
+            className='bg-foreground hover:bg-foreground/90 data-[disabled=true]:bg-foreground/80 absolute right-0 inline-flex aspect-square h-[calc(100%-24px)] -translate-x-[calc(50%-6px)] items-center justify-center rounded-full transition-colors duration-500 hover:cursor-pointer disabled:cursor-auto'
             data-disabled={!thinkingDone || querying}
             disabled={querying || !thinkingDone}
             onClick={() => {
               submitQuery();
             }}
           >
-            <Send className='size-3/5 -rotate-90 text-background' />
+            <Send className='text-background size-3/5 -rotate-90' />
           </button>
         </div>
         <div className='flex h-7 gap-2 px-4'>
@@ -233,7 +232,7 @@ export default function Home() {
             {selectedTags.map((tag) => (
               <motion.button
                 animate={{ opacity: 1, transition: { type: `spring` }, x: 0 }}
-                className='rounded-full border px-4 font-sans font-medium backdrop-blur-sm transition-colors duration-200 hover:cursor-pointer hover:border-destructive/80 hover:bg-destructive/20'
+                className='hover:border-destructive/80 hover:bg-destructive/20 rounded-full border px-4 font-sans font-medium backdrop-blur-sm transition-colors duration-200 hover:cursor-pointer'
                 exit={{
                   opacity: 0,
                   transition: {

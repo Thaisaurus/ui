@@ -8,7 +8,7 @@ const colors = {
   yellow: `hover:bg-yellow-400 bg-yellow-300`,
 };
 
-const GraphNode = ({
+const ChartNode = ({
   options: { color = `green` } = {},
   position,
   randomDelay = true,
@@ -48,4 +48,4 @@ const GraphNode = ({
     />
   );
 };
-export { GraphNode };
+export { ChartNode };
