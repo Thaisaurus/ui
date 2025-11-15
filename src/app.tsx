@@ -107,13 +107,13 @@ export default function Home() {
   return (
     <>
       <Graph nodes={nodes} queryWord={queryWord} theWord={theWord} />
-      <div className='fixed bottom-0 right-1/2 flex -translate-y-12 translate-x-1/2 flex-col justify-center gap-1.5'>
-        <div className='flex items-center justify-center h-3'>
+      <div className='fixed right-1/2 bottom-0 flex translate-x-1/2 -translate-y-12 flex-col justify-center gap-1.5'>
+        <div className='flex h-3 items-center justify-center'>
           <AnimatePresence onExitComplete={() => setThinkingDone(true)}>
             {querying && (
               <m.span
                 animate={{ opacity: 1, transition: { type: `spring` }, y: 0 }}
-                className='text-foreground/80 -z-50 text-center'
+                className='-z-50 text-center text-foreground/80'
                 exit={{
                   opacity: 0,
                   position: `absolute`,
@@ -128,14 +128,14 @@ export default function Home() {
             )}
           </AnimatePresence>
         </div>
-        <div className='relative flex z-50 rounded-full transition-all items-center gap-2'>
+        <div className='relative z-50 flex items-center gap-2 rounded-full transition-all'>
           <ComboboxProvider open={tagsOpen} placement='top'>
             <Combobox
               autoComplete='none'
               autoFocus
               autoSelect
               blurActiveItemOnClick
-              className='bg-border/20 font-sans transition-colors data-disabled:placeholder:text-muted-foreground/80  placeholder:text-muted-foreground text-foreground  outline-border/20 backdrop-blur-sm  min-w-0 md:w-xl max-sm:w-2xs rounded-full border pb-3.5 pl-6 pr-16 pt-4 text-xl focus:border focus:outline-none'
+              className='min-w-0 rounded-full border bg-border/20 pt-4 pr-16 pb-3.5 pl-6 font-sans text-xl text-foreground outline-border/20 backdrop-blur-sm transition-colors placeholder:text-muted-foreground focus:border focus:outline-none data-disabled:placeholder:text-muted-foreground/80 max-sm:w-2xs md:w-xl'
               data-disabled={!thinkingDone || querying}
               focusOnMove={false}
               onChange={(e) => {
@@ -175,7 +175,7 @@ export default function Home() {
             />
             <MotionComboboxPopover
               animate={{ opacity: 1 }}
-              className='bg-border/20 border rounded-lg p-2 flex flex-col backdrop-blur-sm gap-2'
+              className='flex flex-col gap-2 rounded-lg border bg-border/20 p-2 backdrop-blur-sm'
               finalFocus={inputRef.current}
               gutter={4}
               initial={{ opacity: 0 }}
@@ -187,14 +187,14 @@ export default function Home() {
               unmountOnHide
             >
               <ComboboxGroup className='flex flex-col gap-2'>
-                <ComboboxGroupLabel className='border-b font-sans px-2 font-semibold py-2 text-sm'>
+                <ComboboxGroupLabel className='border-b px-2 py-2 font-sans text-sm font-semibold'>
                   Tags
                 </ComboboxGroupLabel>
                 {filteredTags.map((tag) => (
                   <ComboboxItem
                     autoFocus
                     className={clsx(
-                      `data-active-item:bg-border/40 data-active-item:outline outline-none outline-border px-2 py-2 font-sans rounded-md`,
+                      `rounded-md px-2 py-2 font-sans outline-border outline-none data-active-item:bg-border/40 data-active-item:outline`,
                     )}
                     clickOnSpace={false}
                     hideOnClick
@@ -218,22 +218,22 @@ export default function Home() {
           </ComboboxProvider>
 
           <button
-            className='bg-foreground data-disabled:bg-foreground/80 right-0 hover:bg-foreground/90 absolute inline-flex aspect-square h-[calc(100%-24px)] -translate-x-[calc(50%-6px)]  items-center justify-center rounded-full transition-colors hover:cursor-pointer'
+            className='absolute right-0 inline-flex aspect-square h-[calc(100%-24px)] -translate-x-[calc(50%-6px)] items-center justify-center rounded-full bg-foreground transition-colors hover:cursor-pointer hover:bg-foreground/90 data-disabled:bg-foreground/80'
             data-disabled={!thinkingDone || querying}
             disabled={querying || !thinkingDone}
             onClick={() => {
               submitQuery();
             }}
           >
-            <Send className='text-background size-3/5 -rotate-90' />
+            <Send className='size-3/5 -rotate-90 text-background' />
           </button>
         </div>
-        <div className='flex gap-2 px-4 h-7'>
+        <div className='flex h-7 gap-2 px-4'>
           <AnimatePresence mode='popLayout'>
             {selectedTags.map((tag) => (
               <motion.button
                 animate={{ opacity: 1, transition: { type: `spring` }, x: 0 }}
-                className='border px-4 rounded-full font-sans font-medium transition-colors duration-200 hover:bg-destructive/20 backdrop-blur-sm hover:border-destructive/80 hover:cursor-pointer'
+                className='rounded-full border px-4 font-sans font-medium backdrop-blur-sm transition-colors duration-200 hover:cursor-pointer hover:border-destructive/80 hover:bg-destructive/20'
                 exit={{
                   opacity: 0,
                   transition: {

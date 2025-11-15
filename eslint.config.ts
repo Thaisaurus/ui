@@ -5,6 +5,7 @@ import {
   eslintConfigPerfectionist,
   eslintConfigPrettier,
   eslintConfigReact,
+  eslintConfigRelative,
 } from '@hiddenability/opinionated-defaults/eslint';
 import { fileURLToPath } from 'node:url';
 
@@ -14,13 +15,5 @@ export default eslintConfig([
   ...eslintConfigPerfectionist,
   ...eslintConfigPrettier,
   ...eslintConfigReact,
-  // {
-  //   languageOptions: {
-  //     parserOptions: {
-  //       projectService: {
-  //         allowDefaultProject: [`prettier.config.mjs`],
-  //       },
-  //     },
-  //   },
-  // },
+  ...eslintConfigRelative,
 ]);

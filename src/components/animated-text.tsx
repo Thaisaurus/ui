@@ -15,7 +15,7 @@ const AnimatedText = ({
     {children.split(``).map((character, i) => (
       <motion.span
         animate={{ opacity: 1, x: 0 }}
-        className='overflow-x-clip relative w-min h-min'
+        className='relative h-min w-min overflow-x-clip'
         exit={{ opacity: 0, x: -position }}
         initial={{ opacity: 0, x: position }}
         key={`${character}-${i}`}
@@ -31,7 +31,7 @@ const AnimatedText = ({
             <>&nbsp;</>
           : character}
         </span>
-        <span className='flex items-center justify-center visible absolute inset-0'>
+        <span className='visible absolute inset-0 flex items-center justify-center'>
           {character}
         </span>
       </motion.span>

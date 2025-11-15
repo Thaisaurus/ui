@@ -25,7 +25,7 @@ const GraphNode = ({
     <m.div
       animate={{ opacity: 1, x: `-50%`, y: `-50%` }}
       className={clsx(
-        `absolute z-50 size-8 rounded-full hover:cursor-pointer transition-colors duration-200`,
+        `absolute z-50 size-8 rounded-full transition-colors duration-200 hover:cursor-pointer`,
         colors[color],
       )}
       exit={{
