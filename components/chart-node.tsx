@@ -7,7 +7,7 @@ import {
   PopoverProvider,
 } from '@ariakit/react';
 import clsx from 'clsx';
-import { AnimatePresence, motion } from 'motion/react';
+import { motion } from 'motion/react';
 import { useMemo, useRef, useState } from 'react';
 
 import type { Node } from '@/lib/types';
@@ -22,6 +22,7 @@ const colors = {
 
 const normalize = (a: number, b: number, t: number) => b + (a - b) * t;
 
+// cooked
 const parseOklch = (className: string): OKLCH => {
   const rootStyles = getComputedStyle(document.documentElement);
 
@@ -84,7 +85,7 @@ const ChartNode = ({
   );
 
   const portalRef = useRef(null);
-  const { hover: hoverColor, normal: normalColor } = calculatedColors;
+  const { hover: _hoverColor, normal: normalColor } = calculatedColors;
   const { x, y } = position;
 
   const initialDelay = useMemo(() => Math.random() * 0.8, []);
@@ -107,12 +108,12 @@ const ChartNode = ({
         <PopoverAnchor>
           <motion.button
             animate={{
-              backgroundColor:
-                (
-                  hasToggled ? toggle : toggle || hover
-                ) ?
-                  hoverColor
-                : normalColor,
+              // backgroundColor:
+              //   (
+              //     hasToggled ? toggle : toggle || hover
+              //   ) ?
+              //     hoverColor
+              //   : normalColor,
               opacity: 1,
               scale:
                 (
@@ -154,7 +155,7 @@ const ChartNode = ({
               setHasToggled(false);
             }}
             style={{
-              backgroundColor: normalColor,
+              // backgroundColor: normalColor,
               borderColor: `var(${colors[variant]})`,
             }}
             transition={{ type: `spring` }}
@@ -171,6 +172,7 @@ const ChartNode = ({
                 opacity: 0,
               }}
               key={word}
+              style={{ color: normalColor }}
             >
               {word}
             </motion.span>
