@@ -6,7 +6,7 @@ import { type MouseEvent, useEffect, useRef, useState } from 'react';
 import type { Node } from '@/lib/types';
 
 import { AnimatedText } from '@/components/animated-text';
-import { ChartNode } from '@/components/chart-element';
+import { ChartNode } from '@/components/chart-node';
 
 const Chart = ({
   nodes,
@@ -22,12 +22,14 @@ const Chart = ({
     y: 0,
   });
   const [isDragging, setIsDragging] = useState(false);
-  const [hoveringNode, setHoveringNode] = useState(false);
+  // const [hoveringNode, setHoveringNode] = useState(false); // literally only used to handle cursor state
   const dragStartRef = useRef({ x: 0, y: 0 });
   const graphRef = useRef<HTMLDivElement>(null);
 
   const [windowWidth, setWindowWidth] = useState(0);
   const [windowHeight, setWindowHeight] = useState(0);
+
+  const minSimilarity = Math.min(...nodes.map((node) => node.similarity), 100);
 
   useEffect(() => {
     const handleResize = () => {
@@ -56,7 +58,7 @@ const Chart = ({
     <div
       className={clsx(
         `relative flex h-[200vh] w-[200vw] items-center justify-center bg-[url(/bg.svg)] bg-center`,
-        !hoveringNode && (isDragging ? `cursor-grabbing` : `cursor-grab`),
+        isDragging ? `cursor-grabbing` : `cursor-grab`,
       )}
       onMouseDown={(e: MouseEvent) => {
         setIsDragging(true);
@@ -109,21 +111,25 @@ const Chart = ({
       }}
     >
       <AnimatePresence>
-        {nodes.map(({ id, position }) => (
+        {nodes.map((node) => (
           <ChartNode
-            key={`${id}-${position.x}-${position.y}`}
-            position={position}
-            setHoveringNode={setHoveringNode}
+            key={`${node.id}-${node.position.x}-${node.position.y}`}
+            minimumSimilarity={minSimilarity}
+            node={node}
           />
         ))}
       </AnimatePresence>
       <AnimatePresence mode='wait'>
         <ChartNode
           key={queryWord}
-          options={{ color: `red` }}
-          position={{ x: 50, y: 50 }}
+          minimumSimilarity={minSimilarity}
+          node={{
+            position: { x: 50, y: 50 },
+            similarity: 1,
+            variant: `search`,
+            word: queryWord,
+          }}
           randomDelay={false}
-          setHoveringNode={setHoveringNode}
         />
       </AnimatePresence>
       <div className='mx-auto flex h-screen w-screen select-none grid-cols-6 grid-rows-4 flex-col flex-wrap px-8 py-12 md:grid lg:grid-cols-12'>

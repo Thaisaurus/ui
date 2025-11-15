@@ -21,12 +21,19 @@ import { Send } from '@/components/icons';
 
 const sampleQueries = [`A more pleasant word for "smell"`, `Lol`, `wtf`];
 
-const genRandomNodes = () =>
-  Array.from({ length: 10 }).map((_) => ({
-    id: Math.floor(Math.random() * 100_000),
-    position: { x: Math.random() * 80 + 10, y: Math.random() * 80 + 10 },
-    word: `haha`,
-  }));
+const genRandomNodes = (): Node[] =>
+  Array.from({ length: 20 }).map((_, i) => {
+    const position = { x: Math.random() * 60 + 20, y: Math.random() * 60 + 20 };
+    const similarity = 1 - Math.hypot(position.x - 50, position.y - 50) / 100;
+    console.log(position, similarity);
+    return {
+      id: Math.floor(Math.random() * 100_000),
+      position,
+      similarity,
+      variant: i < 10 ? `antonym` : `synonym`,
+      word: `haha`,
+    };
+  });
 
 const tags = [
   { id: 1, name: `Sad` },

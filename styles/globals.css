@@ -10,6 +10,15 @@
   --breakpoint-2xl: 80rem;
 }
 
+@theme static {
+  --color-search: oklch(90.5% 0.182 98.111);
+  --color-search-hover: oklch(85.2% 0.199 91.936);
+  --color-synonym: oklch(72.3% 0.219 149.579);
+  --color-synonym-hover: oklch(62.7% 0.194 149.214);
+  --color-antonym: oklch(63.7% 0.237 25.331);
+  --color-antonym-hover: oklch(57.7% 0.245 27.325);
+}
+
 @theme inline {
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
