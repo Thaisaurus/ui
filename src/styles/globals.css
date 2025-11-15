@@ -1,0 +1,61 @@
+@import 'tailwindcss';
+@import "./dark.css";
+
+@utility optimize-legibility {
+  text-rendering: optimizeLegibility;
+}
+
+@theme {
+  --breakpoint-xl: 70rem;
+  --breakpoint-2xl: 80rem;
+}
+
+@theme inline {
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-primary: var(--gray-1);
+  --color-primary-foreground: var(--gray-12);
+  --color-secondary: var(--gray-3);
+  --color-secondary-foreground: var(--gray-11);
+  --color-background: var(--color-background);
+  --color-foreground: var(--gray-12);
+  --color-card: var(--gray-1);
+  --color-popover: var(--gray-1);
+  --color-card-foreground: var(--gray-12);
+  --color-muted: var(--gray-6);
+  --color-muted-foreground: var(--gray-9);
+  --color-accent: var(--accent-4);
+  --color-constructive: var(--constructive);
+  --color-destructive: var(--destructive);
+  --color-border: var(--gray-a5);
+  --color-outline: var(--gray-6);
+  --color-input: var(--gray-2);
+  --color-ring: var(--gray-8);
+  --color-white-hover: var(--white-hover);
+}
+
+:root {
+  --radius: 0.625rem;
+  --constructive: oklch(0.577 0.1752 146.11);
+  --destructive: oklch(0.577 0.245 27.325);
+}
+
+@font-face {
+  font-family: 'Castoro';
+  src: url('./assets/Castoro-Regular.ttf') format('ttf');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50 optimize-legibility tracking-tight antialiased;
+    font-family: 'Castoro', serif;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+}
