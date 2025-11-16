@@ -174,7 +174,7 @@ const ChartNode = ({
                 </span>
                 <span>Class</span>
                 <span className='inset-0 text-2xl'>{wordClass}</span>
-                <span>Position of Speech</span>
+                <span>Part of Speech</span>
                 <span className='inset-0 text-2xl'>{pos}</span>
               </PopoverDescription>
 
