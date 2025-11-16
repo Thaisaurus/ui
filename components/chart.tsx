@@ -40,10 +40,10 @@ const Chart = ({
 
     handleResize();
 
-    document.addEventListener(`resize`, handleResize);
+    globalThis.addEventListener(`resize`, handleResize);
 
     return () => {
-      document.removeEventListener(`resize`, handleResize);
+      globalThis.removeEventListener(`resize`, handleResize);
     };
   }, []);
 
