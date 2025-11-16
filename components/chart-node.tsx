@@ -1,103 +1,71 @@
 import {
   Popover,
   PopoverAnchor,
-  PopoverArrow,
   PopoverDescription,
   PopoverHeading,
   PopoverProvider,
 } from '@ariakit/react';
 import clsx from 'clsx';
-import { motion } from 'motion/react';
+import {
+  AnimatePresence,
+  motion,
+  useIsPresent,
+  type Variants,
+} from 'motion/react';
 import { useMemo, useRef, useState } from 'react';
 
 import type { Node } from '@/lib/types';
 
-type OKLCH = { c: number; h: number; l: number };
+const menu = {
+  closed: {
+    scale: 0,
+    transition: {
+      delay: 0.15,
+    },
+  },
+  open: {
+    scale: 1,
+    transition: {
+      duration: 0.4,
+      type: `spring`,
+    },
+  },
+} satisfies Variants;
 
-const colors = {
-  antonym: `--color-antonym`,
-  search: `--color-search`,
-  synonym: `--color-synonym`,
-};
-
-const normalize = (a: number, b: number, t: number) => b + (a - b) * t;
-
-// cooked
-const parseOklch = (className: string): OKLCH => {
-  const rootStyles = getComputedStyle(document.documentElement);
-
-  const oklch = rootStyles
-    .getPropertyValue(className)
-    .match(/oklch\(([^ ]+) ([^ ]+) ([^ ]+)(?: \/ ([^ ]+))?\)/);
-
-  if (!oklch) return { c: 0, h: 0, l: 0 };
-
-  return {
-    c: Number.parseFloat(oklch[2]),
-    h: Number.parseFloat(oklch[3]),
-    l: Number.parseFloat(oklch[1]),
-  };
-};
-
-const getOklch = ({
-  minimumSimilarity = 0,
-  similarity,
-  variant,
-}: {
-  minimumSimilarity?: number;
-  similarity: number;
-  variant: keyof typeof colors;
-}): { hover: string; normal: string } => {
-  const from = colors[`search`];
-  const to = colors[variant];
-
-  const normSim = (similarity - minimumSimilarity) / (1 - minimumSimilarity);
-
-  const fromNormal = parseOklch(from);
-  const fromHover = parseOklch(`${from}-hover`);
-  const toNormal = parseOklch(to);
-  const toHover = parseOklch(`${to}-hover`);
-
-  return {
-    hover: `oklch(${normalize(toHover.l, fromHover.l, normSim)}% ${normalize(toHover.c, fromHover.c, normSim)} ${normalize(toHover.h, fromHover.h, normSim)})`,
-    normal: `oklch(${normalize(toNormal.l, fromNormal.l, normSim)}% ${normalize(toNormal.c, fromNormal.c, normSim)} ${normalize(toNormal.h, fromNormal.h, normSim)})`,
-  };
-};
+const MotionPopover = motion.create(Popover);
 
 const ChartNode = ({
-  minimumSimilarity,
-  node: { position, similarity, variant = `synonym`, word },
+  node: { color, phrase, pos, position, similarity, wordClass = `synonym` },
   randomDelay = true,
+  submitQuery,
 }: {
   minimumSimilarity: number;
   node: Omit<Node, `id`>;
   randomDelay?: boolean;
+  submitQuery: (_: string) => void;
 }) => {
-  console.log(`render`);
-  const calculatedColors = useMemo(
-    () =>
-      getOklch({
-        minimumSimilarity,
-        similarity,
-        variant,
-      }),
-    [similarity, variant, minimumSimilarity],
-  );
+  const isPresent = useIsPresent();
 
   const portalRef = useRef(null);
-  const { hover: _hoverColor, normal: normalColor } = calculatedColors;
   const { x, y } = position;
 
   const initialDelay = useMemo(() => Math.random() * 0.8, []);
 
   const exitDelay = randomDelay ? Math.random() * 0.8 : 0.2;
   const [hover, setHover] = useState(false);
+  const [popoverHover, setPopoverHover] = useState(false);
   const [toggle, setToggle] = useState(false);
   const [hasToggled, setHasToggled] = useState(false);
+
+  const isPopoverOpen =
+    isPresent && (toggle || (!hasToggled && (hover || popoverHover)));
 
   return (
     <div
       className='absolute'
+      onMouseLeave={() => {
+        setHasToggled(false);
+      }}
       ref={portalRef}
       style={{
         left: `${x}%`,
@@ -108,21 +76,14 @@ const ChartNode = ({
         <PopoverAnchor>
           <motion.button
             animate={{
-              // backgroundColor:
-              //   (
-              //     hasToggled ? toggle : toggle || hover
-              //   ) ?
-              //     hoverColor
-              //   : normalColor,
+              borderColor:
+                isPopoverOpen ?
+                  `var(--color-${wordClass}-hover)`
+                : `var(--color-${wordClass})`,
               opacity: 1,
-              scale:
-                (
-                  hasToggled ? toggle : toggle || hover
-                ) ?
-                  1.2
-                : 1,
+              scale: isPresent && !isPopoverOpen ? 1 : 1.2,
               transition: {
-                backgroundColor: { delay: 0, duration: 0.2 },
+                borderColor: { delay: 0, duration: 0.2 },
                 delay: initialDelay,
                 scale: { delay: 0, duration: 0.2 },
                 type: `spring`,
@@ -131,7 +92,7 @@ const ChartNode = ({
               y: `-50%`,
             }}
             className={clsx(
-              `border-6 absolute z-40 size-8 rounded-full hover:cursor-pointer`,
+              `border-6 absolute z-40 size-8 rounded-full bg-[#171718] hover:cursor-pointer`,
             )}
             exit={{
               opacity: 0,
@@ -152,54 +113,85 @@ const ChartNode = ({
             }}
             onMouseLeave={() => {
               setHover(false);
-              setHasToggled(false);
-            }}
-            style={{
-              // backgroundColor: normalColor,
-              borderColor: `var(${colors[variant]})`,
             }}
             transition={{ type: `spring` }}
           />
-          {!(hasToggled ? toggle : toggle || hover) && (
-            <motion.span
-              animate={{
-                opacity: 1,
-                transition: { delay: initialDelay },
-              }}
-              className='absolute left-1/2 top-1/2 -translate-x-1/2 translate-y-full rounded-full px-2 backdrop-blur-sm'
-              exit={{ opacity: 0, scale: 0.8, y: -5 }}
-              initial={{
-                opacity: 0,
-              }}
-              key={word}
-              style={{ color: normalColor }}
-            >
-              {word}
-            </motion.span>
+          {wordClass !== `search` && (
+            <AnimatePresence>
+              {isPresent && !isPopoverOpen && (
+                <motion.span
+                  animate={{
+                    opacity: 1,
+                    transition: { delay: initialDelay },
+                  }}
+                  className='bg-border/20 absolute left-1/2 top-1/2 z-30 mt-6 w-auto max-w-md -translate-x-1/2 rounded-md border px-2 pt-1 text-center backdrop-blur-md'
+                  exit={{ opacity: 0, scale: 0.8, y: -5 }}
+                  initial={{
+                    opacity: 0,
+                  }}
+                  key={phrase.content}
+                  style={{ color: `oklch(${color.l} ${color.c} ${color.h})` }}
+                >
+                  {phrase.content}
+                </motion.span>
+              )}
+            </AnimatePresence>
           )}
         </PopoverAnchor>
-        <Popover
-          autoFocusOnShow={false}
-          className='bg-border/20 z-50 flex flex-col rounded-md border px-4 py-3 outline-none backdrop-blur-3xl'
-          gutter={16}
-          hideOnInteractOutside={false}
-          onClose={(e) => e.preventDefault()}
-          open={hasToggled ? toggle : toggle || hover}
-          portalElement={portalRef.current}
-          unmountOnHide
-        >
-          <PopoverArrow className='fill-border' size={24} />
-          <PopoverHeading className='text-md'>{word}</PopoverHeading>
-          <hr className='border-t outline-none' />
-          <PopoverDescription className='flex flex-col gap-0'>
-            <span>score</span>
-            <span className='inset-0 text-2xl'>{similarity.toFixed(3)}</span>
-            <span>variant</span>
-            <span className='inset-0 text-2xl'>{variant}</span>
-          </PopoverDescription>
-        </Popover>
+        <AnimatePresence>
+          {isPopoverOpen && (
+            <MotionPopover
+              animate={isPopoverOpen ? `open` : `closed`}
+              autoFocusOnShow={false}
+              className='bg-border/20 z-50 flex origin-bottom flex-col gap-2 rounded-md border px-3 py-3 outline-none backdrop-blur-3xl'
+              exit='closed'
+              flip={false}
+              gutter={28}
+              hideOnInteractOutside={false}
+              initial='closed'
+              onMouseEnter={() => setPopoverHover(true)}
+              onMouseLeave={() => setPopoverHover(false)}
+              open={isPopoverOpen}
+              slide={false}
+              variants={menu}
+            >
+              <PopoverHeading className='text-md wrap-break-word flex max-w-sm flex-col font-medium'>
+                <span className='text-2xl'>{phrase.content}</span>
+                {phrase.definition && (
+                  <span className='max-w-sm'>{phrase.definition}</span>
+                )}
+              </PopoverHeading>
+              <span>
+                <hr className='border-t outline-none' />
+              </span>
+              <PopoverDescription className='flex max-w-sm flex-col gap-1'>
+                <span>Similarity Score</span>
+                <span
+                  className='inset-0 text-2xl'
+                  style={{ color: `oklch(${color.l} ${color.c} ${color.h})` }}
+                >
+                  {similarity.toFixed(3)}
+                </span>
+                <span>Class</span>
+                <span className='inset-0 text-2xl'>{wordClass}</span>
+                <span>Position of Speech</span>
+                <span className='inset-0 text-2xl'>{pos}</span>
+              </PopoverDescription>
+
+              {wordClass !== `search` && (
+                <button
+                  className='bg-border/60 hover:bg-border/40 rounded-md border px-4 py-2 transition-colors hover:cursor-pointer'
+                  onClick={() => submitQuery(phrase.content)}
+                >
+                  Search
+                </button>
+              )}
+            </MotionPopover>
+          )}
+        </AnimatePresence>
       </PopoverProvider>
     </div>
   );
 };
+
 export { ChartNode };

@@ -1,9 +1,18 @@
 type Node = {
-  id: number;
+  color: { c: number; h: number; l: number };
+  id: string;
+  phrase: Phrase;
+  pos?: `adjective` | `adverb` | `noun` | `verb`;
   position: { x: number; y: number }; // 0 < x,y < 100
   similarity: number; // 0 to 1
-  variant: `antonym` | `search` | `synonym`;
-  word: string;
+  wordClass: `antonym` | `search` | `synonym`;
 };
 
-export type { Node };
+type Phrase = {
+  content: string;
+  definition?: string;
+};
+
+type Tag = { id: number; name: string; value: string };
+
+export type { Node, Phrase, Tag };

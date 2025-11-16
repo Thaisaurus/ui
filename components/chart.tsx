@@ -3,7 +3,7 @@ import { AnimatePresence } from 'motion/react';
 import { motion } from 'motion/react';
 import { type MouseEvent, useEffect, useRef, useState } from 'react';
 
-import type { Node } from '@/lib/types';
+import type { Node, Phrase } from '@/lib/types';
 
 import { AnimatedText } from '@/components/animated-text';
 import { ChartNode } from '@/components/chart-node';
@@ -11,18 +11,19 @@ import { ChartNode } from '@/components/chart-node';
 const Chart = ({
   nodes,
   queryWord,
-  theWord,
+  submitQuery,
+  thePhrase,
 }: {
   nodes: Array<Node>;
   queryWord: string;
-  theWord: { definition: string; word: string };
+  submitQuery: (_: string) => void;
+  thePhrase: Phrase;
 }) => {
   const [position, setPosition] = useState({
     x: 0,
     y: 0,
   });
   const [isDragging, setIsDragging] = useState(false);
-  // const [hoveringNode, setHoveringNode] = useState(false); // literally only used to handle cursor state
   const dragStartRef = useRef({ x: 0, y: 0 });
   const graphRef = useRef<HTMLDivElement>(null);
 
@@ -116,6 +117,7 @@ const Chart = ({
             key={`${node.id}-${node.position.x}-${node.position.y}`}
             minimumSimilarity={minSimilarity}
             node={node}
+            submitQuery={submitQuery}
           />
         ))}
       </AnimatePresence>
@@ -124,18 +126,26 @@ const Chart = ({
           key={queryWord}
           minimumSimilarity={minSimilarity}
           node={{
-            position: { x: 50, y: 50 },
+            color: { c: 0.233, h: 130.85, l: 0.768 },
+            phrase: { content: queryWord, definition: `` },
+            position: {
+              x: 50,
+              y: 50,
+            },
             similarity: 1,
-            variant: `search`,
-            word: queryWord,
+            wordClass: `search`,
           }}
           randomDelay={false}
+          submitQuery={() => {}}
         />
       </AnimatePresence>
       <div className='mx-auto flex h-screen w-screen select-none grid-cols-6 grid-rows-4 flex-col flex-wrap px-8 py-12 md:grid lg:grid-cols-12'>
         <div className='col-span-4 row-start-2 md:col-start-2 lg:col-start-3'>
+          <h3 className='ml-1 flex text-6xl text-lime-500 md:text-4xl'>
+            synonym
+          </h3>
           <h1 className='flex text-6xl md:text-8xl'>
-            <AnimatedText position={50}>{theWord.word}</AnimatedText>
+            <AnimatedText position={50}>{thePhrase.content}</AnimatedText>
           </h1>
           <AnimatePresence mode='wait'>
             <motion.h2
@@ -143,9 +153,9 @@ const Chart = ({
               className='text-foreground/70 text-3xl'
               exit={{ opacity: 0 }}
               initial={{ opacity: 0 }}
-              key={theWord.word}
+              key={thePhrase.content}
             >
-              {theWord.definition}
+              {thePhrase.definition}
             </motion.h2>
           </AnimatePresence>
         </div>
