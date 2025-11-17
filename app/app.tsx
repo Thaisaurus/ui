@@ -24,10 +24,10 @@ import { Info } from '@/components/icons';
 import { Send } from '@/components/icons';
 
 const sampleQueries = [
-  `A more pleasant word for "smell"`,
-  `How the sun interacts with windows`,
+  `a more pleasant word for smell`,
+  `how the sun interacts with windows`,
+  `how you feel when you play minecraft`,
   `recalcitrant`,
-  `oblique`,
 ];
 
 const tags = [
@@ -126,7 +126,7 @@ export default function Home() {
         thePhrase={theWord}
       />
 
-      <div className='fixed bottom-2 right-1/2 flex flex-1 grow translate-x-1/2 flex-col justify-center gap-1.5 2xl:bottom-6'>
+      <div className='fixed bottom-2 right-1/2 z-50 flex flex-1 grow translate-x-1/2 flex-col justify-center gap-1.5 2xl:bottom-6'>
         <div className='flex h-3 items-center justify-center'>
           <AnimatePresence onExitComplete={() => setThinkingDone(true)}>
             {querying && (
@@ -270,7 +270,7 @@ export default function Home() {
                 </span>
               </HovercardAnchor>
               <Hovercard
-                className='bg-border/20 flex flex-col gap-2 rounded-md border py-2 backdrop-blur-sm'
+                className='bg-border/20 z-50 flex flex-col gap-2 rounded-md border py-2 backdrop-blur-sm'
                 gutter={16}
                 slide={false}
               >
