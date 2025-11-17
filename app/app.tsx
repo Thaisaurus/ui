@@ -70,7 +70,7 @@ export default function Home() {
 
   const submitQuery = async (text: string = query) => {
     if (querying || !thinkingDone) return;
-    if (text.length === 0) return;
+    if (text.trim().length === 0) return;
     const params = new URLSearchParams({
       height: window.innerWidth.toString(),
       n: (10).toString(),
@@ -151,7 +151,12 @@ export default function Home() {
         <div className='relative z-50 flex items-center justify-center gap-2 rounded-full transition-all'>
           <motion.span
             animate={
-              query.length > 0 && !tagsOpen && thinkingDone && !querying ?
+              (
+                query.trim().length > 0 &&
+                !tagsOpen &&
+                thinkingDone &&
+                !querying
+              ) ?
                 `visible`
               : `invisible`
             }
