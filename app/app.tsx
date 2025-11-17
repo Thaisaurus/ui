@@ -28,6 +28,7 @@ const sampleQueries = [
   `how the sun interacts with windows`,
   `how you feel when you play minecraft`,
   `recalcitrant`,
+  `devpost`,
 ];
 
 const tags = [
