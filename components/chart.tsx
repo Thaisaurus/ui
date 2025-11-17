@@ -1,7 +1,7 @@
 import clsx from 'clsx';
 import { AnimatePresence } from 'motion/react';
 import { motion } from 'motion/react';
-import { type MouseEvent, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import type { Node, Phrase } from '@/lib/types';
 
@@ -19,41 +19,28 @@ const Chart = ({
   submitQuery: (_: string) => void;
   thePhrase: Phrase;
 }) => {
-  const [position, setPosition] = useState({
-    x: 0,
-    y: 0,
-  });
+  // const [scale, setScale] = useState(1);
   const [isDragging, setIsDragging] = useState(false);
   const dragStartRef = useRef({ x: 0, y: 0 });
   const graphRef = useRef<HTMLDivElement>(null);
 
-  const [windowWidth, setWindowWidth] = useState(0);
-  const [windowHeight, setWindowHeight] = useState(0);
-
   const minSimilarity = Math.min(...nodes.map((node) => node.similarity), 100);
 
   useEffect(() => {
-    const handleResize = () => {
-      setWindowWidth(globalThis.innerWidth);
-      setWindowHeight(globalThis.innerHeight);
-    };
-
-    handleResize();
-
-    globalThis.addEventListener(`resize`, handleResize);
-
-    return () => {
-      globalThis.removeEventListener(`resize`, handleResize);
-    };
-  }, []);
-
-  useEffect(() => {
     if (!graphRef.current) return;
-    setPosition({
-      x: -graphRef.current.clientWidth / 2 + windowWidth / 2,
-      y: -graphRef.current.clientHeight / 2 + windowHeight / 2,
-    });
-  }, [windowHeight, windowWidth]);
+    const graph = graphRef.current;
+    const root = document.querySelector(`#root`);
+    root?.scrollTo(graph.clientWidth / 4, graph.clientHeight / 4);
+
+    // const onWheel = (e: WheelEvent) => {
+    //   if (!e.ctrlKey) return;
+    //   e.preventDefault();
+    //   setScale((o) => Math.max(o + e.deltaY * -0.03, 1));
+    // };
+
+    // graph.addEventListener(`wheel`, onWheel, { passive: false });
+    // return () => graph.removeEventListener(`wheel`, onWheel);
+  }, []);
 
   return (
     <div
@@ -61,55 +48,47 @@ const Chart = ({
         `relative flex h-[200vh] w-[200vw] items-center justify-center bg-[url(/bg.svg)] bg-center`,
         isDragging ? `cursor-grabbing` : `cursor-grab`,
       )}
-      onMouseDown={(e: MouseEvent) => {
+      onPointerDown={(e) => {
+        if (e.pointerType !== `mouse`) return;
         setIsDragging(true);
+        if (!graphRef.current) return;
         dragStartRef.current = {
-          x: e.clientX - position.x,
-          y: e.clientY - position.y,
+          x: e.clientX,
+          y: e.clientY,
         };
       }}
-      onMouseLeave={() => setIsDragging(false)}
-      onMouseMove={(e: MouseEvent) => {
+      onPointerLeave={() => setIsDragging(false)}
+      onPointerMove={(e) => {
         if (!isDragging) return;
         if (!graphRef.current) return;
-        setPosition({
-          x: Math.max(
-            Math.min(0, e.clientX - dragStartRef.current.x),
-            -graphRef.current?.clientWidth + windowWidth,
-          ),
-          y: Math.max(
-            Math.min(0, e.clientY - dragStartRef.current.y),
-            -graphRef.current?.clientHeight + windowHeight,
-          ),
-        });
-      }}
-      onMouseUp={() => setIsDragging(false)}
-      onTouchEnd={() => setIsDragging(false)}
-      onTouchMove={(e) => {
-        if (!isDragging) return;
-        if (!graphRef.current) return;
-        setPosition({
-          x: Math.max(
-            Math.min(0, e.touches[0].clientX - dragStartRef.current.x),
-            -graphRef.current?.clientWidth + windowWidth,
-          ),
-          y: Math.max(
-            Math.min(0, e.touches[0].clientY - dragStartRef.current.y),
-            -graphRef.current?.clientHeight + windowHeight,
-          ),
-        });
-      }}
-      onTouchStart={(e) => {
-        setIsDragging(true);
+        const dx = dragStartRef.current.x - e.clientX;
+        const dy = dragStartRef.current.y - e.clientY;
         dragStartRef.current = {
-          x: e.touches[0].clientX - position.x,
-          y: e.touches[0].clientY - position.y,
+          x: e.clientX,
+          y: e.clientY,
         };
+        const root = document.querySelector(`#root`);
+        root?.scrollTo(root.scrollLeft + dx, root.scrollTop + dy);
+      }}
+      onPointerUp={() => {
+        setIsDragging(false);
+      }}
+      onWheel={(e) => {
+        if (navigator.userAgent.includes(`Mac OS X`)) {
+          const root = document.querySelector(`#root`);
+          if (!root) return;
+          const dxLesser = Math.abs(e.deltaY) >= Math.abs(e.deltaX);
+          const dyLesser = Math.abs(e.deltaX) >= Math.abs(e.deltaY);
+          root.scrollTo(
+            root.scrollLeft + (dxLesser ? e.deltaX : 0),
+            root.scrollTop + (dyLesser ? e.deltaY : 0),
+          );
+        }
       }}
       ref={graphRef}
-      style={{
-        transform: `translate(${position.x}px, ${position.y}px)`,
-      }}
+      // style={{
+      //   transform: `scale(${scale * 100}%)`,
+      // }}
     >
       <AnimatePresence>
         {nodes.map((node) => (

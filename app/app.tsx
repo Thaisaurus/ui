@@ -23,7 +23,12 @@ import { Chart } from '@/components/chart';
 import { Info } from '@/components/icons';
 import { Send } from '@/components/icons';
 
-const sampleQueries = [`A more pleasant word for "smell"`, `Lol`, `wtf`];
+const sampleQueries = [
+  `A more pleasant word for "smell"`,
+  `How the sun interacts with windows`,
+  `recalcitrant`,
+  `oblique`,
+];
 
 const tags = [
   { id: 1, name: `Noun`, value: `noun` },

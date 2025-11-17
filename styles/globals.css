@@ -77,3 +77,13 @@
     @apply bg-background text-foreground;
   }
 }
+
+#root {
+  overflow: scroll;
+  scrollbar-width: none;
+}
+
+#root::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+}
