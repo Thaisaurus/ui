@@ -73,7 +73,6 @@ export default function Home() {
     if (text.trim().length === 0) return;
     const params = new URLSearchParams({
       height: window.innerWidth.toString(),
-      n: (10).toString(),
       phrase: text,
       width: window.innerWidth.toString(),
     });
@@ -269,7 +268,7 @@ export default function Home() {
           </div>
 
           <div className=''>
-            <HovercardProvider defaultOpen placement='top-start' timeout={0}>
+            <HovercardProvider placement='top-start' timeout={0}>
               <HovercardAnchor>
                 <span className='bg-border/20 hover:bg-border/50 flex size-10 items-center justify-center rounded-full border backdrop-blur-sm'>
                   <Info className='size-4' />
